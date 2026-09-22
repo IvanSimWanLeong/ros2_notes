@@ -73,8 +73,16 @@ target_link_libraries(node_name
   lib_name
 )
 
+### for jazzy and older distro
 ament_target_dependencies(node_name PUBLIC
   ${dependencies}
+)
+
+### for lyrical (no more ament_target_dependencies)
+target_link_libraries(node_name PUBLIC
+  lib_name
+  rclcpp::rclcpp
+  std_msgs::std_msgs
 )
 ```
 
