@@ -21,6 +21,12 @@ set(dependencies
 foreach(pkg IN LISTS dependencies)
   find_package(${pkg} REQUIRED)
 endforeach()
+
+# for ros2 lyrical Convert "pkg" -> "pkg::pkg" for target_link_libraries
+set(target_dependencies)
+foreach(pkg IN LISTS dependencies)
+  list(APPEND target_dependencies "${pkg}::${pkg}")
+endforeach()
 ```
 
 ### include directories
@@ -48,6 +54,14 @@ target_include_directories(lib_name PUBLIC
   $<INSTALL_INTERFACE:include>
 )
 
+### Ros2 Lyrical
+target_link_libraries(lib_name PUBLIC
+  target_dependencies
+  jsoncpp
+  yaml-cpp
+)
+
+### Before Ros2 Lyrical
 target_link_libraries(lib_name
   jsoncpp
   yaml-cpp
@@ -83,6 +97,7 @@ target_link_libraries(node_name PUBLIC
   lib_name
   rclcpp::rclcpp
   std_msgs::std_msgs
+  ${target_dependencies}
 )
 ```
 
@@ -113,8 +128,12 @@ install(DIRECTORY launch config
 ### ament export
 ```
 ament_export_dependencies(${dependencies})
+
+### option 1 (without libraries)
 ament_export_include_directories(include) # name of folder in install/${PROJECT_NAME}/
-ament_export_libraries(lib1 lib2) # all libraries
+# ament_export_libraries(lib1 lib2) # all libraries
+
+### option 2 (with libraries)
 ament_export_targets(${PROJECT_NAME})
 
 ament_package()
