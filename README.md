@@ -56,9 +56,8 @@ target_include_directories(lib_name PUBLIC
 
 ### Ros2 Lyrical
 target_link_libraries(lib_name PUBLIC
-  target_dependencies
-  jsoncpp
-  yaml-cpp
+  ${dependencies}
+  ${target_dependencies}
 )
 
 ### Before Ros2 Lyrical
@@ -94,9 +93,7 @@ ament_target_dependencies(node_name PUBLIC
 
 ### for lyrical (no more ament_target_dependencies)
 target_link_libraries(node_name PUBLIC
-  lib_name
-  rclcpp::rclcpp
-  std_msgs::std_msgs
+  ${dependencies}
   ${target_dependencies}
 )
 ```
