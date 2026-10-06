@@ -56,7 +56,6 @@ target_include_directories(lib_name PUBLIC
 
 ### Ros2 Lyrical
 target_link_libraries(lib_name PUBLIC
-  ${dependencies}
   ${target_dependencies}
 )
 
@@ -93,7 +92,6 @@ ament_target_dependencies(node_name PUBLIC
 
 ### for lyrical (no more ament_target_dependencies)
 target_link_libraries(node_name PUBLIC
-  ${dependencies}
   ${target_dependencies}
 )
 ```
