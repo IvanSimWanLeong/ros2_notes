@@ -22,10 +22,25 @@ foreach(pkg IN LISTS dependencies)
   find_package(${pkg} REQUIRED)
 endforeach()
 
-# for ros2 lyrical Convert "pkg" -> "pkg::pkg" for target_link_libraries
-set(target_dependencies)
+# for ros2 lyrical
+set(all_include_dirs)
+set(all_libraries)
+
 foreach(pkg IN LISTS dependencies)
-  list(APPEND target_dependencies "${pkg}::${pkg}")
+  find_package(${pkg} REQUIRED)
+  
+  # 1. Collect Include Directories
+  if(${pkg}_INCLUDE_DIRS)
+    list(APPEND all_include_dirs ${${pkg}_INCLUDE_DIRS})
+  endif()
+
+  # 2. Collect Libraries / Targets
+  if(${pkg}_LIBRARIES)
+    list(APPEND all_libraries ${${pkg}_LIBRARIES})
+  else()
+    # Fallback to default modern target syntax
+    list(APPEND all_libraries "${pkg}::${pkg}")
+  endif()
 endforeach()
 ```
 
@@ -33,6 +48,7 @@ endforeach()
 ```
 include_directories(
   include
+  ${all_include_dirs}
 )
 ```
 
@@ -56,7 +72,7 @@ target_include_directories(lib_name PUBLIC
 
 ### Ros2 Lyrical
 target_link_libraries(lib_name PUBLIC
-  ${target_dependencies}
+  ${all_libraries}
 )
 
 ### Before Ros2 Lyrical
@@ -92,7 +108,7 @@ ament_target_dependencies(node_name PUBLIC
 
 ### for lyrical (no more ament_target_dependencies)
 target_link_libraries(node_name PUBLIC
-  ${target_dependencies}
+  ${all_libraries}
 )
 ```
 
